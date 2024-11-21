@@ -12,6 +12,7 @@ interface Player {
 
 export default function Home() {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const spriteSheetRef = useRef<HTMLImageElement | null>(null);
 
   const [player, setPlayer] = useState<Player>({
     x: 50,
@@ -52,37 +53,42 @@ export default function Home() {
   };
 
   useEffect(() => {
+    const spriteSheet = new Image();
+    spriteSheet.src = spriteSheetUrl;
+    spriteSheetRef.current = spriteSheet;
+
     const canvas = canvasRef.current;
-    const context = canvas?.getContext("2d");
+
+    if (!canvas) return;
+
+    const context = canvas.getContext("2d");
 
     if (!context) return;
 
-    const spriteSheet = new Image();
-    spriteSheet.src = spriteSheetUrl;
+    spriteSheet.onload = () => {
+      const draw = () => {
+        if (!context || !spriteSheetRef.current) return;
 
-    const draw = () => {
-      if (canvas) {
+        // Clear the canvas
         context.clearRect(0, 0, canvas.width, canvas.height);
-      }
 
-      // Draw background
-      context.fillStyle = "lightblue";
-      context.fillRect(0, 0, 640, 480);
+        // Draw background
+        context.fillStyle = "lightblue";
+        context.fillRect(0, 0, 640, 480);
 
-      // Draw player sprite
-      const frameSize = 64; // Each frame is 64x64
-      const directionMap: Record<string, number> = {
-        back: 0,
-        front: 1,
-        left: 2,
-        right: 3,
-      };
+        // Draw player sprite
+        const frameSize = 64; // Each frame is 64x64
+        const directionMap: Record<string, number> = {
+          back: 0,
+          front: 1,
+          left: 2,
+          right: 3,
+        };
 
-      const row = directionMap[player.direction]; // Get the correct row based on direction
+        const row = directionMap[player.direction]; // Get the correct row based on direction
 
-      spriteSheet.onload = () => {
         context.drawImage(
-          spriteSheet,
+          spriteSheetRef.current,
           0, // X-offset for the first column
           row * frameSize, // Calculate Y-offset based on the row
           frameSize,
@@ -92,10 +98,12 @@ export default function Home() {
           player.size,
           player.size
         );
-      };
-    };
 
-    draw();
+        requestAnimationFrame(draw); // Ensure smooth animations
+      };
+
+      draw(); // Start the draw loop
+    };
   }, [player]);
 
   useEffect(() => {
