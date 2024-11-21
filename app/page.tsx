@@ -224,13 +224,7 @@ export default function Home() {
   if (!isRoomJoined) {
     return (
       <div
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%)",
-          textAlign: "center",
-        }}
+        className="flex flex-col items-center justify-center gap-4 h-screen"
       >
         <h1>Join Multiplayer Room</h1>
         <input
@@ -238,19 +232,19 @@ export default function Home() {
           placeholder="Your Username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
-          style={{ padding: "10px", fontSize: "16px", marginBottom: "10px" }}
+          className="px-4 py-2 border rounded-lg"
         />
         <input
           type="text"
           placeholder="Room Key"
           value={roomKey}
           onChange={(e) => setRoomKey(e.target.value)}
-          style={{ padding: "10px", fontSize: "16px", marginBottom: "10px" }}
+          className="px-4 py-2 border rounded-lg"
         />
         <button
           onClick={handleJoinRoom}
-          style={{ padding: "10px", fontSize: "16px" }}
           disabled={!username.trim()}
+          className="px-4 py-2 bg-blue-500 text-white rounded-lg"
         >
           Join Room
         </button>
